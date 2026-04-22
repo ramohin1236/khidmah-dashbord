@@ -1,6 +1,6 @@
 import { Table, Button, Input, Modal } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { Trash2, Plus } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import editIcon from "../../public/Group (14).svg";
 import plusIcon from "../../public/Vector (5).svg";
 import { useState } from "react";
