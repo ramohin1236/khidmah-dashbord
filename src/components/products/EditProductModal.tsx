@@ -4,8 +4,8 @@ import { Select } from "antd";
 import { DUMMY_CATEGORIES, DUMMY_BRANDS } from "../../constants/dummyData";
 
 interface Product {
+    _id: string;
     key: string;
-    id: number;
     name: string;
     category: string;
     brand: string;

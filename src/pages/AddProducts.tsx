@@ -7,10 +7,12 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import AddProductModal from "../components/products/AddProductModal";
 import EditProductModal from "../components/products/EditProductModal";
+import { useAddProductMutation, useDeleteProductMutation, useGetProductsQuery, useUpdateProductMutation } from "../store/api/baseApi";
+import { message } from "antd";
 
 interface ProductData {
+    _id: string;
     key: string;
-    id: number;
     name: string;
     category: string;
     brand: string;
@@ -18,131 +20,50 @@ interface ProductData {
     customizable: boolean;
 }
 
-const PRODUCTS_DATA = [
-    {
-        id: 1,
-        name: "Custom Engraved Metallic Pen",
-        category: "Pen",
-        brand: "Local",
-        image: "https://images.unsplash.com/photo-1585336261022-680e295ce3fe?auto=format&fit=crop&q=80&w=600",
-        customizable: true
-    },
-    {
-        id: 2,
-        name: "Premium Leather Diary",
-        category: "Diary",
-        brand: "Navana",
-        image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=600",
-        customizable: true
-    },
-    {
-        id: 3,
-        name: "Corporate Canvas Tote Bag",
-        category: "Bag",
-        brand: "Custom",
-        image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=600",
-        customizable: true
-    },
-    {
-        id: 4,
-        name: "Traditional Jamdani Saree",
-        category: "Saree",
-        brand: "Local Brand",
-        image: "https://images.unsplash.com/photo-1610189013233-0b196ebcf725?auto=format&fit=crop&q=80&w=600",
-        customizable: false
-    },
-    {
-        id: 5,
-        name: "Matte Black Ceramic Mug",
-        category: "Gift Items",
-        brand: "RFL",
-        image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&q=80&w=600",
-        customizable: true
-    },
-    {
-        id: 6,
-        name: "Executive Organizer Set",
-        category: "Corporate Items",
-        brand: "Navana",
-        image: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=600",
-        customizable: true
-    },
-    {
-        id: 7,
-        name: "Custom Logo Wooden Pen",
-        category: "Pen",
-        brand: "Custom",
-        image: "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?auto=format&fit=crop&q=80&w=600",
-        customizable: true
-    },
-    {
-        id: 8,
-        name: "Eco-Friendly Jute Bag",
-        category: "Bag",
-        brand: "Local Brand",
-        image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=600",
-        customizable: true
-    },
-    {
-        id: 9,
-        name: "Professional Banner Design",
-        category: "Graphic Design",
-        brand: "Expert Design",
-        image: "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=600",
-        customizable: true
-    },
-    {
-        id: 10,
-        name: "Corporate Logo Branding",
-        category: "Graphic Design",
-        brand: "Expert Design",
-        image: "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?auto=format&fit=crop&q=80&w=600",
-        customizable: true
-    },
-    {
-        id: 11,
-        name: "Custom Vector Illustration",
-        category: "Graphic Design",
-        brand: "Illustrator Art",
-        image: "https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?auto=format&fit=crop&q=80&w=600",
-        customizable: true
-    }
-];
 
-const initialDataSource: ProductData[] = PRODUCTS_DATA.map(item => ({
-    ...item,
-    key: String(item.id)
-}));
-
-export default function ClaimlyGuides() {
+export default function AddProducts() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null);
-    const [products, setProducts] = useState<ProductData[]>(initialDataSource);
 
-    const handleAddProduct = (newProduct: Omit<ProductData, "key" | "id">) => {
-        const product: ProductData = {
-            ...newProduct,
-            id: products.length + 1,
-            key: String(products.length + 1),
-        };
-        setProducts([...products, product]);
-        console.log("New Product Added:", product);
+    // RTK Query hooks
+    const { data: productsResponse, isLoading, isFetching } = useGetProductsQuery(undefined);
+    const [addProduct] = useAddProductMutation();
+    const [updateProduct] = useUpdateProductMutation();
+    const [deleteProduct] = useDeleteProductMutation();
+
+    const products = productsResponse?.data?.map((p: any) => ({ ...p, key: p._id })) || [];
+
+    const handleAddProduct = async (newProduct: Omit<ProductData, "key" | "_id">) => {
+        try {
+            await addProduct(newProduct).unwrap();
+            message.success("Product added successfully");
+            setIsModalOpen(false);
+        } catch (error) {
+            message.error("Failed to add product");
+            console.error(error);
+        }
     };
 
-    const handleEditProduct = (id: string, updatedData: Omit<ProductData, "key" | "id">) => {
-        const updatedProducts = products.map((product) =>
-            product.key === id
-                ? { ...product, ...updatedData }
-                : product
-        );
-        setProducts(updatedProducts);
-        console.log("Product Updated:", { id, ...updatedData });
+    const handleEditProduct = async (id: string, updatedData: Omit<ProductData, "key" | "_id">) => {
+        try {
+            await updateProduct({ id, ...updatedData }).unwrap();
+            message.success("Product updated successfully");
+            setIsEditModalOpen(false);
+        } catch (error) {
+            message.error("Failed to update product");
+            console.error(error);
+        }
     };
 
-    const handleDeleteProduct = (id: string) => {
-        setProducts(products.filter(p => p.key !== id));
-        console.log("Product Deleted:", id);
+    const handleDeleteProduct = async (id: string) => {
+        try {
+            await deleteProduct(id).unwrap();
+            message.success("Product deleted successfully");
+        } catch (error) {
+            message.error("Failed to delete product");
+            console.error(error);
+        }
     };
 
     const handleEditClick = (product: ProductData) => {
@@ -157,9 +78,9 @@ export default function ClaimlyGuides() {
             render: (_: unknown, record: ProductData) => (
                 <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-lg overflow-hidden border border-[#DBEAFE] bg-white flex-shrink-0">
-                        <img 
-                            src={record.image} 
-                            alt={record.name} 
+                        <img
+                            src={record.image}
+                            alt={record.name}
                             className="w-full h-full object-cover"
                         />
                     </div>
@@ -225,7 +146,7 @@ export default function ClaimlyGuides() {
     ];
 
     return (
-        <div className="p-8 max-w-[1400px] mx-auto">
+        <div className="p-8 mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                 <div className="flex items-center gap-2">
                     <div className="bg-[#DBEAFE] p-2 rounded-lg">
@@ -249,6 +170,7 @@ export default function ClaimlyGuides() {
                 <Table<ProductData>
                     dataSource={products}
                     columns={columns}
+                    loading={isLoading || isFetching}
                     pagination={{
                         pageSize: 8,
                         position: ["bottomCenter"],
