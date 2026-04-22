@@ -24,6 +24,7 @@ interface EditProductModalProps {
         customizable: boolean;
     }) => void;
     product: Product | null;
+    isLoading?: boolean;
 }
 
 export default function EditProductModal({
@@ -31,6 +32,7 @@ export default function EditProductModal({
     onClose,
     onSave,
     product,
+    isLoading = false,
 }: EditProductModalProps) {
     const [name, setName] = useState("");
     const [category, setCategory] = useState<string | undefined>(undefined);
@@ -39,7 +41,7 @@ export default function EditProductModal({
     const [customizable, setCustomizable] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
-    
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -103,7 +105,6 @@ export default function EditProductModal({
         if (product) {
             onSave(product.key, { name, category, brand, image: imagePreview, customizable });
         }
-        handleClose();
     };
 
     const handleClose = () => {
@@ -112,7 +113,7 @@ export default function EditProductModal({
     };
 
     const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (e.target === e.currentTarget) {
+        if (e.target === e.currentTarget && !isLoading) {
             handleClose();
         }
     };
@@ -128,7 +129,8 @@ export default function EditProductModal({
                 {/* Close Button */}
                 <button
                     onClick={handleClose}
-                    className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors"
+                    disabled={isLoading}
+                    className={`absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}
                 >
                     <X size={24} />
                 </button>
@@ -249,15 +251,24 @@ export default function EditProductModal({
                 <div className="flex gap-4 mt-8">
                     <button
                         onClick={handleClose}
-                        className="flex-1 px-6 py-3 border border-[#E2E8F0] text-[#64748B] rounded-xl font-semibold hover:bg-[#F8FAFC] transition-all"
+                        disabled={isLoading}
+                        className={`flex-1 px-6 py-3 border border-[#E2E8F0] text-[#64748B] rounded-xl font-semibold hover:bg-[#F8FAFC] transition-all ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleSave}
-                        className="flex-1 px-6 py-3 bg-[#2563EB] text-white rounded-xl font-semibold hover:bg-[#1d4ed8] shadow-lg shadow-[#2563EB]/20 transition-all"
+                        disabled={isLoading}
+                        className={`flex-1 px-6 py-3 bg-[#2563EB] text-white rounded-xl font-semibold hover:bg-[#1d4ed8] shadow-lg shadow-[#2563EB]/20 transition-all flex items-center justify-center gap-2 ${isLoading ? 'cursor-not-allowed opacity-80' : ''}`}
                     >
-                        Update Product
+                        {isLoading ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                Updating...
+                            </>
+                        ) : (
+                            "Update Product"
+                        )}
                     </button>
                 </div>
             </div>

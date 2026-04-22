@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Upload } from "lucide-react";
-import { Select } from "antd";
+import { message, Select } from "antd";
 import { DUMMY_CATEGORIES, DUMMY_BRANDS } from "../../constants/dummyData";
 
 interface AddProductModalProps {
@@ -13,12 +13,14 @@ interface AddProductModalProps {
         image: string;
         customizable: boolean;
     }) => void;
+    isLoading?: boolean;
 }
 
 export default function AddProductModal({
     isOpen,
     onClose,
     onSave,
+    isLoading = false,
 }: AddProductModalProps) {
     const [name, setName] = useState("");
     const [category, setCategory] = useState<string | undefined>(undefined);
@@ -27,7 +29,7 @@ export default function AddProductModal({
     const [customizable, setCustomizable] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
-    
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -68,23 +70,22 @@ export default function AddProductModal({
 
     const handleSave = () => {
         if (!name.trim()) {
-            alert("Please enter a product name");
+            message.warning("Please enter a product name");
             return;
         }
         if (!category) {
-            alert("Please select a category");
+            message.warning("Please select a category");
             return;
         }
         if (!brand) {
-            alert("Please select a brand");
+            message.warning("Please select a brand");
             return;
         }
         if (!imagePreview) {
-            alert("Please upload an image");
+            message.warning("Please upload an image");
             return;
         }
         onSave({ name, category, brand, image: imagePreview, customizable });
-        handleClose();
     };
 
     const handleClose = () => {
@@ -98,7 +99,7 @@ export default function AddProductModal({
     };
 
     const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (e.target === e.currentTarget) {
+        if (e.target === e.currentTarget && !isLoading) {
             handleClose();
         }
     };
@@ -114,7 +115,8 @@ export default function AddProductModal({
                 {/* Close Button */}
                 <button
                     onClick={handleClose}
-                    className="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors"
+                    disabled={isLoading}
+                    className={`absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}
                 >
                     <X size={24} />
                 </button>
@@ -238,15 +240,24 @@ export default function AddProductModal({
                 <div className="flex gap-4 mt-8">
                     <button
                         onClick={handleClose}
-                        className="flex-1 px-6 py-3 border border-[#E2E8F0] text-[#64748B] rounded-xl font-semibold hover:bg-[#F8FAFC] transition-all"
+                        disabled={isLoading}
+                        className={`flex-1 px-6 py-3 border border-[#E2E8F0] text-[#64748B] rounded-xl font-semibold hover:bg-[#F8FAFC] transition-all ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleSave}
-                        className="flex-1 px-6 py-3 bg-[#2563EB] text-white rounded-xl font-semibold hover:bg-[#1d4ed8] shadow-lg shadow-[#2563EB]/20 transition-all"
+                        disabled={isLoading}
+                        className={`flex-1 px-6 py-3 bg-[#2563EB] text-white rounded-xl font-semibold hover:bg-[#1d4ed8] shadow-lg shadow-[#2563EB]/20 transition-all flex items-center justify-center gap-2 ${isLoading ? 'cursor-not-allowed opacity-80' : ''}`}
                     >
-                        Add Product
+                        {isLoading ? (
+                            <>
+                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                Adding...
+                            </>
+                        ) : (
+                            "Add Product"
+                        )}
                     </button>
                 </div>
             </div>

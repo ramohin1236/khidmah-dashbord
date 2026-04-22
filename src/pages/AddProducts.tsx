@@ -28,9 +28,9 @@ export default function AddProducts() {
 
     // RTK Query hooks
     const { data: productsResponse, isLoading, isFetching } = useGetProductsQuery(undefined);
-    const [addProduct] = useAddProductMutation();
-    const [updateProduct] = useUpdateProductMutation();
-    const [deleteProduct] = useDeleteProductMutation();
+    const [addProduct, { isLoading: addLoading }] = useAddProductMutation();
+    const [updateProduct, { isLoading: updateLoading }] = useUpdateProductMutation();
+    const [deleteProduct, { isLoading: deleteLoading }] = useDeleteProductMutation();
 
     const products = productsResponse?.data?.map((p: any) => ({ ...p, key: p._id })) || [];
 
@@ -38,10 +38,11 @@ export default function AddProducts() {
         try {
             await addProduct(newProduct).unwrap();
             message.success("Product added successfully");
-            setIsModalOpen(false);
         } catch (error) {
             message.error("Failed to add product");
             console.error(error);
+        } finally {
+            setIsModalOpen(false);
         }
     };
 
@@ -49,10 +50,11 @@ export default function AddProducts() {
         try {
             await updateProduct({ id, ...updatedData }).unwrap();
             message.success("Product updated successfully");
-            setIsEditModalOpen(false);
         } catch (error) {
             message.error("Failed to update product");
             console.error(error);
+        } finally {
+            setIsEditModalOpen(false);
         }
     };
 
@@ -219,6 +221,7 @@ export default function AddProducts() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSave={handleAddProduct}
+                isLoading={addLoading}
             />
 
             {/* Edit Product Modal */}
@@ -227,6 +230,7 @@ export default function AddProducts() {
                 onClose={() => setIsEditModalOpen(false)}
                 onSave={handleEditProduct}
                 product={selectedProduct}
+                isLoading={updateLoading}
             />
         </div>
     );
