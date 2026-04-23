@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Upload } from "lucide-react";
 import { Select, message } from "antd";
-import { DUMMY_CATEGORIES, DUMMY_BRANDS } from "../../constants/dummyData";
+import { useGetCategoriesQuery } from "../../store/api/categoryApi";
+import { useGetBrandsQuery } from "../../store/api/brandApi";
 
 interface Product {
     _id: string;
@@ -41,6 +42,13 @@ export default function EditProductModal({
     const [customizable, setCustomizable] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+
+    // Fetch data from API
+    const { data: categoriesResponse, isLoading: categoriesLoading } = useGetCategoriesQuery(undefined, { skip: !isOpen });
+    const { data: brandsResponse, isLoading: brandsLoading } = useGetBrandsQuery(undefined, { skip: !isOpen });
+
+    const categories = categoriesResponse?.data || [];
+    const brands = brandsResponse?.data || [];
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -212,9 +220,10 @@ export default function EditProductModal({
                         <Select
                             value={category}
                             onChange={(value) => setCategory(value)}
-                            placeholder="Select Category"
+                            placeholder={categoriesLoading ? "Loading..." : "Select Category"}
                             className="w-full h-[46px] rounded-xl"
-                            options={DUMMY_CATEGORIES.map(c => ({ value: c.name, label: c.name }))}
+                            loading={categoriesLoading}
+                            options={categories.map((c: any) => ({ value: c.name, label: c.name }))}
                         />
                     </div>
 
@@ -226,9 +235,10 @@ export default function EditProductModal({
                         <Select
                             value={brand}
                             onChange={(value) => setBrand(value)}
-                            placeholder="Select Brand"
+                            placeholder={brandsLoading ? "Loading..." : "Select Brand"}
                             className="w-full h-[46px] rounded-xl"
-                            options={DUMMY_BRANDS.map(b => ({ value: b.name, label: b.name }))}
+                            loading={brandsLoading}
+                            options={brands.map((b: any) => ({ value: b.name, label: b.name }))}
                         />
                     </div>
 
