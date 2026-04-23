@@ -7,7 +7,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isCollapsed }: SidebarProps) {
   const navItems = [
-    { icon: '/dashbord.svg', label: 'Dashboard', path: '/' },
+    // { icon: '/dashbord.svg', label: 'Dashboard', path: '/' },
     // { icon: '/manageUser.svg', label: 'Manage Users', path: '/manage_users' },
     // { icon: '/manageClaims.svg', label: 'Manage Claims', path: '/manage_claims' },
     { icon: '/khidmahGuides.svg', label: 'Add Products', path: '/add_products' },
