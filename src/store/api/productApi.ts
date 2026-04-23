@@ -26,14 +26,14 @@ export const productApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: updatedProduct,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Products', id }, { type: 'Products', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Products', id }, { type: 'Products', id: 'LIST' }],
     }),
     deleteProduct: builder.mutation({
       query: (id) => ({
         url: `/products/delete/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Products', id }, { type: 'Products', id: 'LIST' }],
+      invalidatesTags: (_result, _error, id) => [{ type: 'Products', id }, { type: 'Products', id: 'LIST' }],
     }),
   }),
 });

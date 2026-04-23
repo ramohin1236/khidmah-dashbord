@@ -26,14 +26,14 @@ export const categoryApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: data, // Expecting FormData
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Categories', id }, { type: 'Categories', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Categories', id }, { type: 'Categories', id: 'LIST' }],
     }),
     deleteCategory: builder.mutation({
       query: (id) => ({
         url: `/categories/delete/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Categories', id }, { type: 'Categories', id: 'LIST' }],
+      invalidatesTags: (_result, _error, id) => [{ type: 'Categories', id }, { type: 'Categories', id: 'LIST' }],
     }),
   }),
 });

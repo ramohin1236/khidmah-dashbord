@@ -26,14 +26,14 @@ export const brandApi = baseApi.injectEndpoints({
         method: 'PATCH',
         body: data, // Expecting FormData
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: 'Brands', id }, { type: 'Brands', id: 'LIST' }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: 'Brands', id }, { type: 'Brands', id: 'LIST' }],
     }),
     deleteBrand: builder.mutation({
       query: (id) => ({
         url: `/brands/delete/${id}`,
         method: 'DELETE',
       }),
-      invalidatesTags: (result, error, id) => [{ type: 'Brands', id }, { type: 'Brands', id: 'LIST' }],
+      invalidatesTags: (_result, _error, id) => [{ type: 'Brands', id }, { type: 'Brands', id: 'LIST' }],
     }),
   }),
 });
