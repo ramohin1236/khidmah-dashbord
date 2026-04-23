@@ -58,7 +58,7 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
                   }}
                 />
                 {!isCollapsed && (
-                  <span className={`font-medium transition-all duration-300 opacity-100 whitespace-nowrap ${isActive ? 'text-white' : 'bg-gradient-to-r from-[#1E293B] to-[#2563EB] bg-clip-text text-transparent'}`}>
+                  <span className={`font-semibold text-lg transition-all duration-300 opacity-100 whitespace-nowrap ${isActive ? 'text-white' : 'bg-gradient-to-r from-[#1E293B] to-[#2563EB] bg-clip-text text-transparent'}`}>
                     {item.label}
                   </span>
                 )}
@@ -70,8 +70,8 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
 
       <div className="p-[1px] my-2 bg-gradient-to-r from-[#1E293B] to-[#2563EB] rounded-md mx-2">
         <button className={`flex items-center cursor-pointer gap-3 px-4 py-3 w-full rounded-[5px] bg-white hover:bg-slate-50 transition-colors ${isCollapsed ? 'justify-center px-0' : ''}`}>
-          <img src={logout} alt="" className="w-5 h-5 transition-transform group-hover:scale-110" />
-          {!isCollapsed && <span className="font-medium whitespace-nowrap bg-gradient-to-r from-[#1E293B] to-[#2563EB] bg-clip-text text-transparent">Logout</span>}
+          <img src={logout} alt="" className="w-6 h-6 transition-transform group-hover:scale-110" />
+          {!isCollapsed && <span className="font-semibold text-lg whitespace-nowrap bg-gradient-to-r from-[#1E293B] to-[#2563EB] bg-clip-text text-transparent">Logout</span>}
         </button>
       </div>
     </div >

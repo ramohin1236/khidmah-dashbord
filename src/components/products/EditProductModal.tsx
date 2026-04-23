@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Upload } from "lucide-react";
-import { Select } from "antd";
+import { Select, message } from "antd";
 import { DUMMY_CATEGORIES, DUMMY_BRANDS } from "../../constants/dummyData";
 
 interface Product {
@@ -65,7 +65,7 @@ export default function EditProductModal({
             };
             reader.readAsDataURL(file);
         } else {
-            alert("Please upload a valid image file");
+            message.error("Please upload a valid image file");
         }
     };
 
@@ -87,19 +87,19 @@ export default function EditProductModal({
 
     const handleSave = () => {
         if (!name.trim()) {
-            alert("Please enter a product name");
+            message.warning("Please enter a product name");
             return;
         }
         if (!category) {
-            alert("Please select a category");
+            message.warning("Please select a category");
             return;
         }
         if (!brand) {
-            alert("Please select a brand");
+            message.warning("Please select a brand");
             return;
         }
         if (!imagePreview) {
-            alert("Please upload an image");
+            message.warning("Please upload an image");
             return;
         }
         if (product) {

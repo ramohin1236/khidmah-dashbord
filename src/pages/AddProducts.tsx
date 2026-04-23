@@ -1,13 +1,13 @@
 import dashboardIcon from "../../public/Group (4).svg";
 import plusIcon from "../../public/Vector (5).svg";
 import editIcon from "../../public/Group (14).svg";
-import { Table, Button, Tag } from "antd";
+import { Table, Button, Tag, Popconfirm } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import AddProductModal from "../components/products/AddProductModal";
 import EditProductModal from "../components/products/EditProductModal";
-import { useAddProductMutation, useDeleteProductMutation, useGetProductsQuery, useUpdateProductMutation } from "../store/api/baseApi";
+import { useAddProductMutation, useDeleteProductMutation, useGetProductsQuery, useUpdateProductMutation } from "../store/api/productApi";
 import { message } from "antd";
 
 interface ProductData {
@@ -135,13 +135,21 @@ export default function AddProducts() {
                     >
                         <img src={editIcon} alt="edit" className="w-4 h-4" />
                     </Button>
-                    <Button
-                        onClick={() => handleDeleteProduct(record.key)}
-                        className="p-0 border-[#EF4444]! rounded-lg w-8 h-8 flex justify-center items-center hover:bg-[#FEF2F2] transition-colors"
-                        style={{ padding: 0 }}
+                    <Popconfirm
+                        title="Delete the product"
+                        description="Are you sure to delete this product?"
+                        onConfirm={() => handleDeleteProduct(record.key)}
+                        okText="Yes"
+                        cancelText="No"
+                        okButtonProps={{ danger: true, loading: deleteLoading }}
                     >
-                        <Trash2 size={16} className="text-[#EF4444]" />
-                    </Button>
+                        <Button
+                            className="p-0 border-[#EF4444]! rounded-lg w-8 h-8 flex justify-center items-center hover:bg-[#FEF2F2] transition-colors"
+                            style={{ padding: 0 }}
+                        >
+                            <Trash2 size={16} className="text-[#EF4444]" />
+                        </Button>
+                    </Popconfirm>
                 </div>
             ),
         },
@@ -155,15 +163,15 @@ export default function AddProducts() {
                         <img src={dashboardIcon} alt="dashboard" className="w-5 h-5" />
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold text-[#1E293B] m-0">Product Management</h1>
-                        <p className="text-sm text-[#64748B]">Manage your product catalog and customization options</p>
+                        <h1 className="text-3xl font-bold text-[#1E293B] m-0">Product Management</h1>
+                        <p className="text-base text-[#64748B]">Manage your product catalog and customization options</p>
                     </div>
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="bg-[#2563EB] text-white! h-11 px-6 rounded-xl font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-[#2563EB]/20 hover:bg-[#1d4ed8] hover:translate-y-[-1px] transition-all"
+                    className="bg-[#2563EB] text-white! h-12 px-8 rounded-xl font-bold text-lg flex items-center gap-2 cursor-pointer shadow-lg shadow-[#2563EB]/20 hover:bg-[#1d4ed8] hover:translate-y-[-1px] transition-all"
                 >
-                    <img src={plusIcon} alt="plus" className="w-4 h-4" />
+                    <img src={plusIcon} alt="plus" className="w-5 h-5" />
                     Add New Product
                 </button>
             </div>
@@ -189,16 +197,17 @@ export default function AddProducts() {
                 .product-table .ant-table-thead > tr > th {
                     background-color: #F8FAFC !important;
                     color: #64748B;
-                    font-weight: 600;
-                    font-size: 13px;
+                    font-weight: 700;
+                    font-size: 15px;
                     text-transform: uppercase;
                     letter-spacing: 0.025em;
                     border-bottom: 1px solid #E2E8F0;
-                    padding: 16px 24px;
+                    padding: 20px 24px;
                 }
                 .product-table .ant-table-tbody > tr > td {
-                    padding: 16px 24px;
+                    padding: 20px 24px;
                     border-bottom: 1px solid #F1F5F9;
+                    font-size: 16px;
                 }
                 .product-table .ant-table-tbody > tr:hover > td {
                     background-color: #F8FAFC !important;

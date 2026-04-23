@@ -1,70 +1,65 @@
-import { Table, Button, Input, Modal } from "antd";
+import { Table, Button, Popconfirm, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Trash2 } from "lucide-react";
 import editIcon from "../../public/Group (14).svg";
 import plusIcon from "../../public/Vector (5).svg";
 import { useState } from "react";
 import dashboardIcon from "../../public/Group (4).svg";
-import { DUMMY_BRANDS } from "../constants/dummyData";
+import { useGetBrandsQuery, useAddBrandMutation, useUpdateBrandMutation, useDeleteBrandMutation } from "../store/api/brandApi";
+import AddBrandModal from "../components/brands/AddBrandModal";
+import EditBrandModal from "../components/brands/EditBrandModal";
 
 interface BrandData {
-    key: string;
-    id: number;
+    _id: string;
     name: string;
 }
 
 export default function ManageBrand() {
-    const [brands, setBrands] = useState<BrandData[]>(
-        DUMMY_BRANDS.map(b => ({ ...b, key: String(b.id) }))
-    );
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingBrand, setEditingBrand] = useState<BrandData | null>(null);
-    const [brandName, setBrandName] = useState("");
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [selectedBrand, setSelectedBrand] = useState<BrandData | null>(null);
 
-    const handleSave = () => {
-        if (!brandName.trim()) return;
+    // RTK Query
+    const { data: brandResponse, isLoading: isGetLoading, isFetching } = useGetBrandsQuery(undefined);
+    const [addBrand, { isLoading: isAddLoading }] = useAddBrandMutation();
+    const [updateBrand, { isLoading: isUpdateLoading }] = useUpdateBrandMutation();
+    const [deleteBrand, { isLoading: isDeleteLoading }] = useDeleteBrandMutation();
 
-        if (editingBrand) {
-            setBrands(brands.map(b =>
-                b.key === editingBrand.key ? { ...b, name: brandName } : b
-            ));
-        } else {
-            const newBrand = {
-                key: String(Date.now()),
-                id: Date.now(),
-                name: brandName
-            };
-            setBrands([...brands, newBrand]);
+    const brands = brandResponse?.data?.map((b: any) => ({ ...b, key: b._id })) || [];
+
+    const handleAdd = async (formData: FormData) => {
+        try {
+            await addBrand(formData).unwrap();
+            message.success("Brand added successfully");
+            setIsAddModalOpen(false);
+        } catch (error) {
+            message.error("Failed to add brand");
         }
-        closeModal();
     };
 
-    const handleDelete = (key: string) => {
-        setBrands(brands.filter(b => b.key !== key));
-    };
-
-    const openModal = (brand?: BrandData) => {
-        if (brand) {
-            setEditingBrand(brand);
-            setBrandName(brand.name);
-        } else {
-            setEditingBrand(null);
-            setBrandName("");
+    const handleUpdate = async (id: string, formData: FormData) => {
+        try {
+            await updateBrand({ id, data: formData }).unwrap();
+            message.success("Brand updated successfully");
+            setIsEditModalOpen(false);
+        } catch (error) {
+            message.error("Failed to update brand");
         }
-        setIsModalOpen(true);
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setEditingBrand(null);
-        setBrandName("");
+    const handleDelete = async (id: string) => {
+        try {
+            await deleteBrand(id).unwrap();
+            message.success("Brand deleted successfully");
+        } catch (error) {
+            message.error("Failed to delete brand");
+        }
     };
 
     const columns: ColumnsType<BrandData> = [
         {
             title: "SL",
-            dataIndex: "id",
-            key: "id",
+            key: "sl",
             width: 80,
             render: (_: any, __: any, index: number) => index + 1,
         },
@@ -83,21 +78,27 @@ export default function ManageBrand() {
             render: (_: any, record: BrandData) => (
                 <div className="flex items-center gap-2">
                     <Button
-                        onClick={() => openModal(record)}
+                        onClick={() => { setSelectedBrand(record); setIsEditModalOpen(true); }}
                         className="p-0 border-[#64748B]! rounded-lg w-8 h-8 flex justify-center items-center hover:bg-[#F1F5F9] transition-colors"
                         style={{ padding: 0 }}
                     >
                         <img src={editIcon} alt="edit" className="w-4 h-4" />
                     </Button>
 
-                    <Button
-                        onClick={() => handleDelete(record.key)}
-                        className="p-0 border-[#EF4444]! rounded-lg w-8 h-8 flex justify-center items-center hover:bg-[#FEF2F2] transition-colors"
-                        style={{ padding: 0 }}
+                    <Popconfirm
+                        title="Delete brand?"
+                        onConfirm={() => handleDelete(record._id)}
+                        okText="Yes"
+                        cancelText="No"
+                        okButtonProps={{ danger: true }}
                     >
-                        <Trash2 size={16} className="text-[#EF4444]" />
-                    </Button>
-
+                        <Button
+                            className="p-0 border-[#EF4444]! rounded-lg w-8 h-8 flex justify-center items-center hover:bg-[#FEF2F2] transition-colors"
+                            style={{ padding: 0 }}
+                        >
+                            <Trash2 size={16} className="text-[#EF4444]" />
+                        </Button>
+                    </Popconfirm>
                 </div>
             ),
         },
@@ -111,15 +112,15 @@ export default function ManageBrand() {
                         <img src={dashboardIcon} alt="dashboard" className="w-5 h-5" />
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold text-[#1E293B] m-0">Manage Brands</h1>
-                        <p className="text-sm text-[#64748B]">Manage your product brands</p>
+                        <h1 className="text-3xl font-bold text-[#1E293B] m-0">Manage Brands</h1>
+                        <p className="text-base text-[#64748B]">Manage your product brands</p>
                     </div>
                 </div>
                 <button
-                    onClick={() => openModal()}
-                    className="bg-[#2563EB] text-white! h-11 px-6 rounded-xl font-semibold flex items-center gap-2 cursor-pointer shadow-lg shadow-[#2563EB]/20 hover:bg-[#1d4ed8] transition-all"
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="bg-[#2563EB] text-white! h-12 px-8 rounded-xl font-bold text-lg flex items-center gap-2 cursor-pointer shadow-lg shadow-[#2563EB]/20 hover:bg-[#1d4ed8] transition-all"
                 >
-                    <img src={plusIcon} alt="plus" className="w-4 h-4" />
+                    <img src={plusIcon} alt="plus" className="w-5 h-5" />
                     Add Brand
                 </button>
             </div>
@@ -128,44 +129,41 @@ export default function ManageBrand() {
                 <Table<BrandData>
                     dataSource={brands}
                     columns={columns}
+                    loading={isGetLoading || isFetching || isDeleteLoading}
                     pagination={{ pageSize: 10, position: ["bottomCenter"] }}
                     className="product-table"
                 />
             </div>
 
-            <Modal
-                title={editingBrand ? "Edit Brand" : "Add New Brand"}
-                open={isModalOpen}
-                onOk={handleSave}
-                onCancel={closeModal}
-                okText={editingBrand ? "Update" : "Add"}
-                okButtonProps={{ className: "bg-[#2563EB] text-white!" }}
-                centered
-            >
-                <div className="py-4">
-                    <label className="block text-sm font-semibold text-[#1E293B] mb-2">
-                        Brand Name
-                    </label>
-                    <Input
-                        value={brandName}
-                        onChange={(e) => setBrandName(e.target.value)}
-                        placeholder="Enter brand name"
-                        className="rounded-lg py-2"
-                    />
-                </div>
-            </Modal>
+            <AddBrandModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSave={handleAdd}
+                isLoading={isAddLoading}
+            />
+
+            <EditBrandModal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onSave={handleUpdate}
+                brand={selectedBrand}
+                isLoading={isUpdateLoading}
+            />
 
             <style>{`
                 .product-table .ant-table-thead > tr > th {
                     background-color: #F8FAFC !important;
                     color: #64748B;
-                    font-weight: 600;
-                    padding: 16px 24px;
+                    font-weight: 700;
+                    font-size: 15px;
+                    padding: 20px 24px;
                 }
                 .product-table .ant-table-tbody > tr > td {
-                    padding: 16px 24px;
+                    padding: 20px 24px;
+                    font-size: 17px;
                 }
             `}</style>
         </div>
     );
 }
+
