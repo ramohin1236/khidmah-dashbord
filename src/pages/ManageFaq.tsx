@@ -11,8 +11,8 @@ import { PencilLine, Trash2 } from "lucide-react";
 const faqData = [
     {
         id: 1,
-        question: "How do I log in to Claimly?",
-        answer: "You can log in using the email and password you used when creating your Claimly account. If you've forgotten your password, use the \"Forgot password\" option on the login page."
+        question: "How do I log in to Khidmah?",
+        answer: "You can log in using the email and password you used when creating your Khidmah account. If you've forgotten your password, use the \"Forgot password\" option on the login page."
     },
     {
         id: 2,

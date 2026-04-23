@@ -1,7 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
 import logo from '../../public/logo.png';
-import logout from '../../public/Group (20).svg';
-import sidenavcollapseLogo from '../../public/vite.svg';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -12,7 +10,7 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
     { icon: '/dashbord.svg', label: 'Dashboard', path: '/' },
     // { icon: '/manageUser.svg', label: 'Manage Users', path: '/manage_users' },
     // { icon: '/manageClaims.svg', label: 'Manage Claims', path: '/manage_claims' },
-    { icon: '/claimlyGuides.svg', label: 'Add Products', path: '/add_products' },
+    { icon: '/khidmahGuides.svg', label: 'Add Products', path: '/add_products' },
     { icon: '/manageFaq.svg', label: 'Manage Category', path: '/manage_category' },
     { icon: '/manageFaq.svg', label: 'Manage Brand', path: '/manage_brand' },
     // { icon: '/manageFaq.svg', label: 'Manage FAQ', path: '/manage_faq' },
@@ -25,7 +23,7 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
     <div className={`h-screen bg-white border-r border-slate-200 flex flex-col fixed left-0 top-0 text-slate-800 transition-all duration-300 z-50 ${isCollapsed ? 'w-20' : 'w-64'}`}>
       <div className={`p-6 flex justify-center items-center h-24 overflow-hidden`}>
         <Link to="/">
-          <img src={isCollapsed ? sidenavcollapseLogo : logo} alt="" className={`transition-all duration-300 ${isCollapsed ? 'w-10 min-w-[40px] h-10' : 'w-24'}`} />
+          <img src={logo} alt="Khidmah" className={`transition-all duration-300 object-contain ${isCollapsed ? 'w-10 h-10' : 'w-24'}`} />
         </Link>
       </div>
 
@@ -68,12 +66,12 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
         ))}
       </nav>
 
-      <div className="p-[1px] my-2 bg-gradient-to-r from-[#1E293B] to-[#2563EB] rounded-md mx-2">
+      {/* <div className="p-[1px] my-2 bg-gradient-to-r from-[#1E293B] to-[#2563EB] rounded-md mx-2">
         <button className={`flex items-center cursor-pointer gap-3 px-4 py-3 w-full rounded-[5px] bg-white hover:bg-slate-50 transition-colors ${isCollapsed ? 'justify-center px-0' : ''}`}>
           <img src={logout} alt="" className="w-6 h-6 transition-transform group-hover:scale-110" />
           {!isCollapsed && <span className="font-semibold text-lg whitespace-nowrap bg-gradient-to-r from-[#1E293B] to-[#2563EB] bg-clip-text text-transparent">Logout</span>}
         </button>
-      </div>
+      </div> */}
     </div >
   );
 }
