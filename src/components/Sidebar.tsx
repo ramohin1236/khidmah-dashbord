@@ -13,6 +13,7 @@ export default function Sidebar({ isCollapsed }: SidebarProps) {
     { icon: '/khidmahGuides.svg', label: 'Add Products', path: '/add_products' },
     { icon: '/manageFaq.svg', label: 'Manage Category', path: '/manage_category' },
     { icon: '/manageFaq.svg', label: 'Manage Brand', path: '/manage_brand' },
+    { icon: '/manageFaq.svg', label: 'Manage Clients', path: '/manage_clients' },
     // { icon: '/manageFaq.svg', label: 'Manage FAQ', path: '/manage_faq' },
     // { icon: '/termsCondition.svg', label: 'Terms & Conditions', path: '/terms_conditions' },
     // { icon: '/privacyPolicy.svg', label: 'Privacy Policy', path: '/privacy_policy' },
