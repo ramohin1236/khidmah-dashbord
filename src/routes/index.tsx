@@ -6,6 +6,7 @@ import AddProducts from '../pages/AddProducts';
 import 'antd/dist/reset.css';
 import ManageCategory from '../pages/ManageCategory';
 import ManageBrand from '../pages/ManageBrand';
+import ManageClients from '../pages/ManageClients';
 
 
 export default function AppRoutes() {
@@ -22,6 +23,7 @@ export default function AppRoutes() {
                 { path: 'add_products', element: <AddProducts /> },
                 { path: 'manage_category', element: <ManageCategory /> },
                 { path: 'manage_brand', element: <ManageBrand /> },
+                { path: 'manage_clients', element: <ManageClients /> },
                 // { path: 'manage_faq', element: <ManageFaq /> },
                 // { path: 'terms_conditions', element: <TermsConditions /> },
                 // { path: 'privacy_policy', element: <PrivacyPolicy /> },
